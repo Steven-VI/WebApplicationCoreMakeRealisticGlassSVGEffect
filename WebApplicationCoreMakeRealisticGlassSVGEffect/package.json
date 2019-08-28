@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+    "grunt-sass": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-nodeunit": "*",
+    "sass": "*",
+    "node-sass": "*",
+    "load-grunt-tasks": "*",
+    "grunt-contrib-sass": "*"
+  }
+}

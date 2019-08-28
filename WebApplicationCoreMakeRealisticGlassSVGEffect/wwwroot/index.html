@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="site.js"></script>
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+    <!-- VISIBLE SVG -->
+    <svg viewBox="0 0 1890 1260">
+
+        <!-- BACKGROUND IMAGE - visible -->
+        <image xlink:href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/5946/kyoto.jpg" width="1890" x=0 height="1260" y=0></image>
+
+        <!-- DISTORTION IMAGE - clipped -->
+        <image xlink:href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/5946/kyoto.jpg" width="1890" x=0 height="1260" y=0 clip-path="url(#clip)" filter="url(#distortion)"></image>
+
+        <!-- TEXT - clipped -->
+        <clipPath id="clip">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">KYOTO</text>
+        </clipPath>
+
+        <!-- TEXT - visible -->
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" filter="url(#textFilter)">KYOTO</text>
+
+    </svg>
+
+    <!-- FILTERS -->
+    <svg>
+        <filter id="distortion">
+            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="turbulence" />
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="20" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+
+        <filter id="textFilter">
+
+            <!-- dark edge -->
+            <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="dark_edge_01" />
+            <feOffset dx="5" dy="5" in="dark_edge_01" result="dark_edge_03" />
+            <feFlood flood-color="rgba(0,0,0,.5)" result="dark_edge_04" />
+            <feComposite in="dark_edge_04" in2="dark_edge_03" operator="in" result="dark_edge" />
+
+            <!-- light edge -->
+            <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="light_edge_01" />
+            <feOffset dx="-2" dy="-2" in="light_edge_01" result="light_edge_03" />
+            <feFlood flood-color="rgba(255,255,255,.5)" result="light_edge_04" />
+            <feComposite in="light_edge_04" in2="light_edge_03" operator="in" result="light_edge" />
+
+            <!-- edges together -->
+            <feMerge result="edges">
+                <feMergeNode in="dark_edge" />
+                <feMergeNode in="light_edge" />
+            </feMerge>
+            <feComposite in="edges" in2="SourceGraphic" operator="out" result="edges_complete" />
+
+            <!-- bevel -->
+            <feGaussianBlur stdDeviation="5" result="bevel_blur" />
+            <feSpecularLighting result="bevel_lighting" in="bevel_blur" specularConstant="2.4" specularExponent="13" lighting-color="rgba(60,60,60,.4)">
+                <feDistantLight azimuth="25" elevation="40" />
+            </feSpecularLighting>
+            <feComposite in="bevel_lighting" in2="SourceGraphic" operator="in" result="bevel_complete" />
+
+            <!-- everything in place -->
+            <feMerge result="complete">
+                <feMergeNode in="edges_complete" />
+                <feMergeNode in="bevel_complete" />
+            </feMerge>
+
+        </filter>
+    </svg>
+</body>
+</html>
